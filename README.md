@@ -9,6 +9,7 @@ Go get yourself a compiled binary from [the releases page](https://github.com/ha
 
 CLI Usage
 -----
+
 ```shell
 $ # set an alias to easily reuse
 $ alias enp="enpasscli -vault=/my-vault-dir/ -sort"
@@ -22,24 +23,34 @@ $ enp show enpass.com
 $ # copy password of 'reddit.com' entry to clipboard
 $ enp copy reddit.com
 
+$ # print login of 'github.com' to stdout, useful for scripting 
+$ login=$(enp login github.com)
+
 $ # print password of 'github.com' to stdout, useful for scripting 
 $ password=$(enp pass github.com)
+
+$ # print login and password of 'github.com' to stdout, useful for scripting 
+$ login_pass=$(enp login_pass github.com)
 ```
 
 Commands
 -----
-| Name | Description |
-| :---: | --- |
-| `list FILTER` | List vault entries matching FILTER without password |
-| `show FILTER` | List vault entries matching FILTER with password |
-| `copy FILTER` | Copy the password of a vault entry matching FILTER to the clipboard |
-| `pass FILTER` | Print the password of a vaulty entry matching FILTER to stdout |
-| `dryrun` | Opens the vault without reading anything from it |
-| `version` | Print the version |
-| `help` | Print the help text |
+
+|        Name         | Description                                                              |
+|:-------------------:|--------------------------------------------------------------------------|
+|    `list FILTER`    | List vault entries matching FILTER without password                      |
+|    `show FILTER`    | List vault entries matching FILTER with password                         |
+|    `copy FILTER`    | Copy the password of a vault entry matching FILTER to the clipboard      |
+|    `pass FILTER`    | Print the password of a vaulty entry matching FILTER to stdout           |
+|   `login FILTER`    | Print the login of a vaulty entry matching FILTER to stdout              |
+| `login_pass FILTER` | Print the login and password of a vaulty entry matching FILTER to stdout |
+|      `dryrun`       | Opens the vault without reading anything from it                         |
+|      `version`      | Print the version                                                        |
+|       `help`        | Print the help text                                                      |
 
 Flags
 -----
+
 | Name | Description |
 | :---: | --- |
 | `-vault=PATH` | Path to your Enpass vault |
@@ -55,6 +66,7 @@ Flags
 
 Testing Code
 -------
+
 ```shell
 $ go test -v $(go list ./... | grep -v /vendor/)
 ```

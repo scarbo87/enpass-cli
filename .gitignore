@@ -2,6 +2,7 @@
 *.tar.xz
 dist
 vendor
+bin
 .release-env
 .semrel/
 .generated-go-semantic-release-changelog.md

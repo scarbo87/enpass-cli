@@ -19,13 +19,15 @@ import (
 
 const (
 	// commands
-	cmdVersion = "version"
-	cmdHelp    = "help"
-	cmdDryRun  = "dryrun"
-	cmdList    = "list"
-	cmdShow    = "show"
-	cmdCopy    = "copy"
-	cmdPass    = "pass"
+	cmdVersion   = "version"
+	cmdHelp      = "help"
+	cmdDryRun    = "dryrun"
+	cmdList      = "list"
+	cmdShow      = "show"
+	cmdCopy      = "copy"
+	cmdPass      = "pass"
+	cmdLogin     = "login"
+	cmdLoginPass = "login_pass"
 	// defaults
 	defaultLogLevel        = logrus.InfoLevel
 	pinMinLength           = 8
@@ -37,7 +39,7 @@ var (
 	version = "dev"
 	// set of all commands
 	commands = map[string]struct{}{cmdVersion: {}, cmdHelp: {}, cmdDryRun: {}, cmdList: {},
-		cmdShow: {}, cmdCopy: {}, cmdPass: {}}
+		cmdShow: {}, cmdCopy: {}, cmdPass: {}, cmdLogin: {}, cmdLoginPass: {}}
 )
 
 type Args struct {
@@ -198,6 +200,29 @@ func entryPassword(logger *logrus.Logger, vault *enpass.Vault, args *Args) {
 	}
 }
 
+func entryLogin(logger *logrus.Logger, vault *enpass.Vault, args *Args) {
+	card, err := vault.GetEntry(*args.cardType, args.filters, true)
+	if err != nil {
+		logger.WithError(err).Fatal("could not retrieve unique card")
+	}
+
+	fmt.Println(card.Subtitle)
+}
+
+func entryLoginPass(logger *logrus.Logger, vault *enpass.Vault, args *Args) {
+	card, err := vault.GetEntry(*args.cardType, args.filters, true)
+	if err != nil {
+		logger.WithError(err).Fatal("could not retrieve unique card")
+	}
+
+	if decrypted, err := card.Decrypt(); err != nil {
+		logger.WithError(err).Fatal("could not decrypt card")
+	} else {
+		fmt.Println(card.Subtitle)
+		fmt.Println(decrypted)
+	}
+}
+
 func assembleVaultCredentials(logger *logrus.Logger, args *Args, store *unlock.SecureStore) *enpass.VaultCredentials {
 	credentials := &enpass.VaultCredentials{
 		Password:    os.Getenv("MASTERPW"),
@@ -311,8 +336,12 @@ func main() {
 		showEntries(logger, vault, args)
 	case cmdCopy:
 		copyEntry(logger, vault, args)
+	case cmdLogin:
+		entryLogin(logger, vault, args)
 	case cmdPass:
 		entryPassword(logger, vault, args)
+	case cmdLoginPass:
+		entryLoginPass(logger, vault, args)
 	default:
 		logger.WithField("command", args.command).Fatal("unknown command")
 	}
